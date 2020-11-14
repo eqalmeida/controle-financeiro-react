@@ -299,19 +299,19 @@ export default function App() {
         justify="space-between"
         alignItems="baseline"
         style={{
-          paddingRight: 20,
+          paddingRight: 15,
           marginRight: 15,
-          marginLeft: 15,
+          marginLeft: 12,
           marginTop: 20,
           marginBottom: 0,
         }}
       >
-        <Grid item xs={9}>
+        <Grid item xs={6}>
           <h4>Lançamentos</h4>
         </Grid>
         <Grid
           item
-          xs={3}
+          xs={6}
           style={{ textAlign: 'right', verticalAlign: 'bottom' }}
         >
           <Button onClick={handleNew} variant="contained" color="primary">

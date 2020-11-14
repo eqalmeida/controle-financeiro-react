@@ -25,22 +25,22 @@ export default React.memo(function Transaction(props) {
           justify="space-between"
           alignItems="baseline"
         >
-          <Grid item xs={4}>
+          <Grid item sm={4} xs={8}>
             {row.description}
           </Grid>
-          <Grid item xs={2}>
+          <Grid item sm={2} xs={4} style={{ textAlign: 'right' }}>
             {row.category}
           </Grid>
-          <Grid item xs={2}>
+          <Grid item sm={2} xs={4} style={{ textAlign: 'center' }}>
             {currFormatter.format(row.value)}
           </Grid>
-          <Grid item xs={2}>
+          <Grid item sm={2} xs={4}>
             <span style={{ fontSize: '0.8rem' }}>
               {`${row.day}`.padStart(2, '0')}/{`${row.month}`.padStart(2, '0')}/
               {row.year}
             </span>
           </Grid>
-          <Grid item xs={2} style={{ textAlign: 'right' }}>
+          <Grid item sm={2} xs={4} style={{ textAlign: 'right' }}>
             <IconButton
               size="small"
               aria-label="edit"

@@ -22,19 +22,19 @@ export default function ResumoLancamentos(props) {
     <Card style={{ marginBottom: 10 }}>
       <CardContent>
         <Grid container>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={3}>
             <strong>Lançamentos: </strong>
             {transactions.length}
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={3}>
             <strong>Receitas: </strong>
             <span>{currFormatter.format(receitas)}</span>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={3}>
             <strong>Despesas: </strong>
             <span>-{currFormatter.format(despesas)}</span>
           </Grid>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={3}>
             <strong>Saldo: </strong>
             {currFormatter.format(receitas - despesas)}
           </Grid>
