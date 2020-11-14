@@ -448,10 +448,10 @@ export default function App() {
           </Button>
 
           <Button color="secondary" onClick={() => setShowForm(false)}>
-            Calcelar
+            Cancelar
           </Button>
           <Button color="primary" autoFocus onClick={handleFormSave}>
-            Gravar
+            Salvar
           </Button>
         </DialogActions>
       </Dialog>
