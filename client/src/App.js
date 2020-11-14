@@ -10,6 +10,8 @@ import {
   DialogContent,
   Radio,
   Snackbar,
+  Backdrop,
+  CircularProgress,
 } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -51,6 +53,10 @@ const useStyles = makeStyles((theme) => ({
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff',
+  },
 }));
 
 function dateStr(transaction) {
@@ -67,10 +73,10 @@ function dateStr(transaction) {
 export default function App() {
   const [transactions, setTransactions] = useState([]);
   const [selected, setSelected] = useState({});
-  const [month, setMonth] = useState(1);
+  const [month, setMonth] = useState(new Date().getMonth());
   const [filter, setFilter] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [year, setYear] = useState(2020);
+  const [year, setYear] = useState(new Date().getFullYear());
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState(null);
@@ -148,6 +154,7 @@ export default function App() {
 
   const handleDeleteSelected = async () => {
     setOpenDeleteConfirmation(false);
+    setIsLoading(true);
     try {
       const resp = await axios.delete(`/api/transaction/${selected._id}`);
       const data = resp.data;
@@ -155,6 +162,7 @@ export default function App() {
       setShowForm(false);
       //setSelected({});
     } catch (error) {}
+    setIsLoading(false);
   };
 
   const handleDescrChange = ({ target }) => {
@@ -192,6 +200,7 @@ export default function App() {
 
   const handleFormSave = async () => {
     setError(null);
+    setIsLoading(true);
     try {
       if (selected._id) {
         // Editando
@@ -219,7 +228,9 @@ export default function App() {
           setTransactions(newData);
         }
       }
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       if (error.response) {
         // Request made and server responded
         console.log(error.response.data);
@@ -241,8 +252,8 @@ export default function App() {
   return (
     <Container maxWidth="md">
       <Box my={4} style={{ textAlign: 'center' }}>
-        <h1>Bootcamp Fullstack - Desafio final</h1>
-        <h3>Controle financeiro Pessoal</h3>
+        <h1>Controle financeiro Pessoal</h1>
+        <h3>Bootcamp Fullstack - Desafio final</h3>
       </Box>
       <Card style={{ marginBottom: 10 }}>
         <CardContent>
@@ -429,11 +440,13 @@ export default function App() {
         </DialogContent>
         <DialogActions>
           <Button
+            disabled={!selected._id}
             color="secondary"
             onClick={() => setOpenDeleteConfirmation(true)}
           >
             Excluir
           </Button>
+
           <Button color="secondary" onClick={() => setShowForm(false)}>
             Calcelar
           </Button>
@@ -448,6 +461,9 @@ export default function App() {
         onClose={() => setError(null)}
         message={error}
       ></Snackbar>
+      <Backdrop className={classes.backdrop} open={isLoading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Container>
   );
 }
