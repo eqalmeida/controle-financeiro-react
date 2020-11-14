@@ -127,8 +127,17 @@ export default function App() {
   };
 
   const handleNew = () => {
+    const today = new Date();
     setError(null);
-    setSelected({});
+    setSelected({
+      dercription: '',
+      category: '',
+      type: '',
+      value: 0,
+      day: today.getDate(),
+      month: today.getMonth() + 1,
+      year: today.getFullYear(),
+    });
     setShowForm(true);
   };
 
@@ -351,7 +360,9 @@ export default function App() {
         aria-describedby="alert-dialog-description"
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="alert-dialog-title">{'Editar registro'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {selected._id ? 'Editar registro' : 'Novo registro'}
+        </DialogTitle>
         <DialogContent>
           <Grid
             container
