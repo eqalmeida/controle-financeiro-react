@@ -153,7 +153,7 @@ export default function App() {
       const data = resp.data;
       setTransactions([...transactions.filter((t) => t._id !== data._id)]);
     } catch (error) {}
-    setSelected(null);
+    setSelected({});
   };
 
   const handleDescrChange = ({ target }) => {
