@@ -152,8 +152,9 @@ export default function App() {
       const resp = await axios.delete(`/api/transaction/${selected._id}`);
       const data = resp.data;
       setTransactions([...transactions.filter((t) => t._id !== data._id)]);
+      setShowForm(false);
+      //setSelected({});
     } catch (error) {}
-    setSelected({});
   };
 
   const handleDescrChange = ({ target }) => {
@@ -427,6 +428,12 @@ export default function App() {
           </Grid>
         </DialogContent>
         <DialogActions>
+          <Button
+            color="secondary"
+            onClick={() => setOpenDeleteConfirmation(true)}
+          >
+            Excluir
+          </Button>
           <Button color="secondary" onClick={() => setShowForm(false)}>
             Calcelar
           </Button>

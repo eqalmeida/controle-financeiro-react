@@ -17,7 +17,11 @@ export default React.memo(function Transaction(props) {
       : { backgroundColor: '#cfc' };
 
   return (
-    <Card key={row._id} style={{ ...rowStyle, marginBottom: 5 }}>
+    <Card
+      key={row._id}
+      style={{ ...rowStyle, marginBottom: 5 }}
+      onClick={() => handleEdit(index)}
+    >
       <CardContent>
         <Grid
           container
@@ -40,24 +44,7 @@ export default React.memo(function Transaction(props) {
               {row.year}
             </span>
           </Grid>
-          <Grid item sm={2} xs={4} style={{ textAlign: 'right' }}>
-            <IconButton
-              size="small"
-              aria-label="edit"
-              color="primary"
-              onClick={() => handleEdit(index)}
-            >
-              <EditIcon fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              aria-label="delete"
-              color="secondary"
-              onClick={() => handleDelete(index)}
-            >
-              <DeleteIcon fontSize="small" />
-            </IconButton>
-          </Grid>
+          <Grid item sm={2} xs={4} style={{ textAlign: 'right' }}></Grid>
         </Grid>
       </CardContent>
     </Card>
