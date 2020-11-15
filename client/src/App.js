@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Container,
   Box,
@@ -87,29 +87,59 @@ export default function App() {
 
   useEffect(() => {
     if (!isLoading) {
-      loadTransactions(debouncedFilter, month, year);
+      loadTransactions(month, year);
     }
-  }, [debouncedFilter, month, year]);
+  }, [month, year]);
 
-  const loadTransactions = async (f, m, y) => {
+  useEffect(() => {
+    if (!isLoading) {
+      //loadTransactions(debouncedFilter, month, year);
+    }
+  }, [debouncedFilter]);
+
+  const filteredItems = useMemo(() => {
+    if (debouncedFilter && debouncedFilter.length > 0) {
+      const f = debouncedFilter.toLowerCase();
+      const items = transactions.filter((t) =>
+        t.description.toLowerCase().includes(f)
+      );
+      return items;
+    }
+    return transactions;
+  }, [debouncedFilter, transactions]);
+
+  const loadTransactions = async (m, y) => {
     setIsLoading(true);
     try {
       let data = {};
-      if (f.length > 1) {
-        const resp = await axios.get(`/api/transaction/?filter=${f}`);
-        data = resp.data;
-      } else {
-        const monthStr = `${m + 1}`.padStart(2, '0');
-        const yearStr = `${y}`.padStart(4, '0');
-        const yearMonth = `${yearStr}-${monthStr}`;
+      const monthStr = `${m + 1}`.padStart(2, '0');
+      const yearStr = `${y}`.padStart(4, '0');
+      const yearMonth = `${yearStr}-${monthStr}`;
 
-        const resp = await axios.get(`/api/transaction/?period=${yearMonth}`);
-        data = resp.data;
-      }
+      const resp = await axios.get(`/api/transaction/?period=${yearMonth}`);
+      data = resp.data;
       setTransactions(data.transactions);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+    }
+  };
+
+  const handleDateInc = () => {
+    if (month < 11) {
+      setMonth(month + 1);
+    } else if (year < 2021) {
+      setMonth(0);
+      setYear(year + 1);
+    }
+  };
+
+  const handleDateDec = () => {
+    if (month > 0) {
+      setMonth(month - 1);
+    } else if (year > 2019) {
+      setMonth(11);
+      setYear(year - 1);
     }
   };
 
@@ -257,54 +287,73 @@ export default function App() {
       </Box>
       <Card style={{ marginBottom: 10 }}>
         <CardContent>
-          <IconButton aria-label="delete" color="secondary">
-            <ArrowLeft />
-          </IconButton>
-          <FormControl className={classes.formControl}>
-            <InputLabel id="mes-input">Mês</InputLabel>
-            <Select
-              labelId="mes-input"
-              id="mes-input-id"
-              value={month}
-              onChange={handleMonthChange}
-            >
-              {months.map((item, index) => (
-                <MenuItem key={index} value={index}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <FormControl className={classes.formControl}>
-            <InputLabel id="ano-input">Ano</InputLabel>
-            <Select
-              labelId="ano-input"
-              id="ano-input-id"
-              value={year}
-              onChange={handleYearChange}
-            >
-              {[2019, 2020, 2021].map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <IconButton aria-label="delete" color="secondary">
-            <ArrowRight />
-          </IconButton>
-          <FormControl>
-            <TextField
-              id="filter-input"
-              label="Filtro"
-              value={filter}
-              onChange={handleFilterChange}
-            />
-          </FormControl>
+          <Grid container direction="row" justify="center" alignItems="center">
+            <Grid item>
+              <IconButton
+                aria-label="delete"
+                color="secondary"
+                onClick={handleDateDec}
+              >
+                <ArrowLeft />
+              </IconButton>
+            </Grid>
+            <Grid item>
+              <FormControl className={classes.formControl}>
+                <InputLabel id="mes-input">Mês</InputLabel>
+                <Select
+                  labelId="mes-input"
+                  id="mes-input-id"
+                  value={month}
+                  onChange={handleMonthChange}
+                >
+                  {months.map((item, index) => (
+                    <MenuItem key={index} value={index}>
+                      {item}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl className={classes.formControl}>
+                <InputLabel id="ano-input">Ano</InputLabel>
+                <Select
+                  labelId="ano-input"
+                  id="ano-input-id"
+                  value={year}
+                  onChange={handleYearChange}
+                >
+                  {[2019, 2020, 2021].map((item, index) => (
+                    <MenuItem key={index} value={item}>
+                      {item}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item>
+              <IconButton
+                aria-label="delete"
+                color="secondary"
+                onClick={handleDateInc}
+              >
+                <ArrowRight />
+              </IconButton>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
       <ResumoLancamentos transactions={transactions} />
 
+      <Box style={{ marginLeft: 15, marginRight: 15 }}>
+        <FormControl fullWidth>
+          <TextField
+            id="filter-input"
+            label="Filtro"
+            fullWidth
+            value={filter}
+            onChange={handleFilterChange}
+          />
+        </FormControl>
+      </Box>
       <Grid
         container
         direction="row"
@@ -337,7 +386,7 @@ export default function App() {
           <div>Loading...</div>
         ) : (
           <ListTransactions
-            transactions={transactions}
+            transactions={filteredItems}
             handleEdit={handleEdit}
             handleDelete={handleDelete}
           />

@@ -1,7 +1,4 @@
 import React from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import { Card, CardContent, Grid } from '@material-ui/core';
 
 const currFormatter = new Intl.NumberFormat('pt-br', {
@@ -10,7 +7,7 @@ const currFormatter = new Intl.NumberFormat('pt-br', {
 });
 
 export default React.memo(function Transaction(props) {
-  const { row, handleEdit, handleDelete, index } = props;
+  const { row, handleEdit, index } = props;
   const rowStyle =
     row.type === '-'
       ? { backgroundColor: '#fcc' }
@@ -19,7 +16,7 @@ export default React.memo(function Transaction(props) {
   return (
     <Card
       key={row._id}
-      style={{ ...rowStyle, marginBottom: 5 }}
+      style={{ ...rowStyle, marginBottom: 5, cursor: 'pointer' }}
       onClick={() => handleEdit(index)}
     >
       <CardContent>
