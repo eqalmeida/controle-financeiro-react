@@ -158,7 +158,7 @@ export default function App() {
 
   const handleEdit = (idx) => {
     setError(null);
-    setSelected({ ...transactions[idx] });
+    setSelected({ ...filteredItems[idx] });
     setShowForm(true);
   };
 
@@ -178,7 +178,7 @@ export default function App() {
   };
 
   const handleDelete = (idx) => {
-    setSelected({ ...transactions[idx] });
+    setSelected({ ...filteredItems[idx] });
     setOpenDeleteConfirmation(true);
   };
 
@@ -290,6 +290,7 @@ export default function App() {
           <Grid container direction="row" justify="center" alignItems="center">
             <Grid item>
               <IconButton
+                variant="contained"
                 aria-label="delete"
                 color="secondary"
                 onClick={handleDateDec}
@@ -331,6 +332,7 @@ export default function App() {
             </Grid>
             <Grid item>
               <IconButton
+                variant="contained"
                 aria-label="delete"
                 color="secondary"
                 onClick={handleDateInc}
