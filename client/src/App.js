@@ -290,7 +290,13 @@ export default function App() {
       </Box>
       <Card style={{ marginBottom: 10 }}>
         <CardContent>
-          <Grid container direction="row" justify="center" alignItems="center">
+          <Grid
+            container
+            direction="row"
+            justify="center"
+            alignItems="center"
+            spacing={0}
+          >
             <Grid item>
               <IconButton
                 variant="contained"
