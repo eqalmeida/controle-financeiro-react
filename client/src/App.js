@@ -144,7 +144,7 @@ export default function App() {
   };
 
   const handleMonthChange = (event) => {
-    setMonth(event.target.value);
+    setMonth(event.target.value - 1);
   };
 
   const handleYearChange = (event) => {
