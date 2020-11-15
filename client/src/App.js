@@ -170,9 +170,9 @@ export default function App() {
       category: '',
       type: '',
       value: 0,
-      day: today.getDate(),
-      month: today.getMonth() + 1,
-      year: today.getFullYear(),
+      day: 1,
+      month: month + 1,
+      year: year,
     });
     setShowForm(true);
   };
@@ -253,7 +253,10 @@ export default function App() {
         const resp = await axios.post(`/api/transaction/`, selected);
         const data = resp.data;
         setShowForm(false);
-        if (data.year === year && data.month === month) {
+        if (
+          parseInt(data.year) === year &&
+          parseInt(data.month) === month + 1
+        ) {
           const newData = [data, ...transactions];
           setTransactions(newData);
         }
@@ -343,7 +346,7 @@ export default function App() {
           </Grid>
         </CardContent>
       </Card>
-      <ResumoLancamentos transactions={transactions} />
+      <ResumoLancamentos transactions={filteredItems} />
 
       <Box style={{ marginLeft: 15, marginRight: 15 }}>
         <FormControl fullWidth>
