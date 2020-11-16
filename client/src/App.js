@@ -222,6 +222,11 @@ export default function App() {
     setSelected(obj);
   };
 
+  const handleFormSubmit = (form) => {
+    form.preventDefault();
+    handleFormSave();
+  };
+
   const handleFormSave = async () => {
     setError(null);
     setShowForm(false);
@@ -402,92 +407,103 @@ export default function App() {
         aria-describedby="alert-dialog-description"
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="alert-dialog-title">
-          {selected._id ? 'Editar registro' : 'Novo registro'}
-        </DialogTitle>
-        <DialogContent>
-          <Grid
-            container
-            direction="column"
-            justify="space-around"
-            alignItems="stretch"
-            spacing={2}
-          >
-            <Grid item>
-              <div>
-                <Radio
-                  id="form-receita"
-                  value="+"
-                  disabled={!!selected._id}
-                  checked={selected.type === '+'}
-                  onChange={handleTypeChange}
-                  label="Receita"
+        <form onSubmit={handleFormSubmit}>
+          <DialogTitle id="alert-dialog-title">
+            {selected._id ? 'Editar registro' : 'Novo registro'}
+          </DialogTitle>
+          <DialogContent>
+            <Grid
+              container
+              direction="column"
+              justify="space-around"
+              alignItems="stretch"
+              spacing={2}
+            >
+              <Grid item>
+                <div>
+                  <Radio
+                    id="form-receita"
+                    value="+"
+                    disabled={!!selected._id}
+                    checked={selected.type === '+'}
+                    onChange={handleTypeChange}
+                    label="Receita"
+                  />
+                  <label htmlFor="form-receita">Receita</label>
+                  <Radio
+                    id="form-despesa"
+                    value="-"
+                    disabled={!!selected._id}
+                    checked={selected.type === '-'}
+                    onChange={handleTypeChange}
+                    label="Despesa"
+                  />
+                  <label htmlFor="form-despesa">Despesa</label>
+                </div>
+              </Grid>
+              <Grid item>
+                <TextField
+                  label="Descrição"
+                  required
+                  fullWidth
+                  defaultValue={selected.description}
+                  onChange={handleDescrChange}
                 />
-                <label htmlFor="form-receita">Receita</label>
-                <Radio
-                  id="form-despesa"
-                  value="-"
-                  disabled={!!selected._id}
-                  checked={selected.type === '-'}
-                  onChange={handleTypeChange}
-                  label="Despesa"
+              </Grid>
+              <Grid item>
+                <TextField
+                  fullWidth
+                  required
+                  label="Categoria"
+                  defaultValue={selected.category}
+                  onChange={handleCategoryChange}
                 />
-                <label htmlFor="form-despesa">Despesa</label>
-              </div>
+              </Grid>
+              <Grid item>
+                <TextField
+                  fullWidth
+                  required
+                  label="Valor"
+                  type="number"
+                  defaultValue={selected.value}
+                  onChange={handleValueChange}
+                />
+              </Grid>
+              <Grid item>
+                <TextField
+                  fullWidth
+                  required
+                  label="Data"
+                  type="date"
+                  defaultValue={dateStr(selected)}
+                  onChange={handleDateChange}
+                />
+              </Grid>
             </Grid>
-            <Grid item>
-              <TextField
-                label="Descrição"
-                fullWidth
-                value={selected.description}
-                onChange={handleDescrChange}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                fullWidth
-                label="Categoria"
-                value={selected.category}
-                onChange={handleCategoryChange}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                fullWidth
-                label="Valor"
-                type="number"
-                defaultValue={selected.value}
-                onChange={handleValueChange}
-              />
-            </Grid>
-            <Grid item>
-              <TextField
-                fullWidth
-                label="Data"
-                type="date"
-                defaultValue={dateStr(selected)}
-                onChange={handleDateChange}
-              />
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions>
-          <IconButton
-            disabled={!selected._id}
-            aria-label="delete"
-            color="secondary"
-            onClick={() => setOpenDeleteConfirmation(true)}
-          >
-            <Delete />
-          </IconButton>
+          </DialogContent>
+          <DialogActions>
+            <IconButton
+              disabled={!selected._id}
+              aria-label="delete"
+              color="secondary"
+              onClick={() => setOpenDeleteConfirmation(true)}
+            >
+              <Delete />
+            </IconButton>
 
-          <Button color="secondary" onClick={() => setShowForm(false)}>
-            Cancelar
-          </Button>
-          <Button color="primary" autoFocus onClick={handleFormSave}>
-            Salvar
-          </Button>
-        </DialogActions>
+            <Button color="secondary" onClick={() => setShowForm(false)}>
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              autoFocus
+              // onClick={handleFormSave}
+            >
+              Salvar
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
       <Snackbar
         open={!!error}
