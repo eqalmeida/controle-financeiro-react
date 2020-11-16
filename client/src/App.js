@@ -86,16 +86,10 @@ export default function App() {
   const debouncedFilter = useDebounce(filter, 500);
 
   useEffect(() => {
-    if (!isLoading) {
-      loadTransactions(month, year);
-    }
+    //if (!isLoading) {
+    loadTransactions(month, year);
+    //}
   }, [month, year]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      //loadTransactions(debouncedFilter, month, year);
-    }
-  }, [debouncedFilter]);
 
   const filteredItems = useMemo(() => {
     if (debouncedFilter && debouncedFilter.length > 0) {
@@ -163,7 +157,6 @@ export default function App() {
   };
 
   const handleNew = () => {
-    const today = new Date();
     setError(null);
     setSelected({
       dercription: '',
@@ -222,9 +215,9 @@ export default function App() {
   const handleDateChange = ({ target }) => {
     const obj = { ...selected };
     const date = new Date(target.value);
-    obj.year = date.getFullYear();
-    obj.month = date.getMonth() + 1;
-    obj.day = date.getDate();
+    obj.year = date.getUTCFullYear();
+    obj.month = date.getUTCMonth() + 1;
+    obj.day = date.getUTCDate();
     setSelected(obj);
   };
 
@@ -492,7 +485,7 @@ export default function App() {
               <TextField
                 label="Data"
                 type="date"
-                value={dateStr(selected)}
+                defaultValue={dateStr(selected)}
                 onChange={handleDateChange}
               />
             </Grid>
