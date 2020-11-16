@@ -13,10 +13,7 @@ import {
   Backdrop,
   CircularProgress,
 } from '@material-ui/core';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -24,26 +21,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import ArrowLeft from '@material-ui/icons/ArrowLeft';
 import ArrowRight from '@material-ui/icons/ArrowRight';
+import Delete from '@material-ui/icons/Delete';
 
 import useDebounce from './shared/useDebounce';
 import axios from 'axios';
 import ListTransactions from './components/ListTransactions';
 import ResumoLancamentos from './components/ResumoLancamentos';
-
-const months = [
-  'Jan',
-  'Fev',
-  'Mar',
-  'Abr',
-  'Mai',
-  'Jun',
-  'Jul',
-  'Ago',
-  'Set',
-  'Out',
-  'Nov',
-  'Dez',
-];
+import PeriodFilter from './components/PeriodFilter';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -138,7 +122,7 @@ export default function App() {
   };
 
   const handleMonthChange = (event) => {
-    setMonth(event.target.value - 1);
+    setMonth(event.target.value);
   };
 
   const handleYearChange = (event) => {
@@ -177,14 +161,31 @@ export default function App() {
 
   const handleDeleteSelected = async () => {
     setOpenDeleteConfirmation(false);
+    setShowForm(false);
     setIsLoading(true);
     try {
       const resp = await axios.delete(`/api/transaction/${selected._id}`);
       const data = resp.data;
       setTransactions([...transactions.filter((t) => t._id !== data._id)]);
-      setShowForm(false);
       //setSelected({});
-    } catch (error) {}
+    } catch (error) {
+      setShowForm(true);
+      if (error.response) {
+        // Request made and server responded
+        console.log(error.response.data);
+        //console.log(error.response.status);
+        //console.log(error.response.headers);
+        if (error.response.data.error) {
+          setError(error.response.data.error);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+    }
     setIsLoading(false);
   };
 
@@ -223,6 +224,7 @@ export default function App() {
 
   const handleFormSave = async () => {
     setError(null);
+    setShowForm(false);
     setIsLoading(true);
     try {
       if (selected._id) {
@@ -232,8 +234,6 @@ export default function App() {
           selected
         );
         const data = resp.data;
-
-        setShowForm(false);
 
         const index = transactions.findIndex((x) => x._id === selected._id);
         if (index >= 0) {
@@ -245,7 +245,6 @@ export default function App() {
         // Novo
         const resp = await axios.post(`/api/transaction/`, selected);
         const data = resp.data;
-        setShowForm(false);
         if (
           parseInt(data.year) === year &&
           parseInt(data.month) === month + 1
@@ -257,6 +256,7 @@ export default function App() {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
+      setShowForm(true);
       if (error.response) {
         // Request made and server responded
         console.log(error.response.data);
@@ -301,36 +301,12 @@ export default function App() {
               </IconButton>
             </Grid>
             <Grid item>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="mes-input">Mês</InputLabel>
-                <Select
-                  labelId="mes-input"
-                  id="mes-input-id"
-                  value={month}
-                  onChange={handleMonthChange}
-                >
-                  {months.map((item, index) => (
-                    <MenuItem key={index} value={index}>
-                      {item}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="ano-input">Ano</InputLabel>
-                <Select
-                  labelId="ano-input"
-                  id="ano-input-id"
-                  value={year}
-                  onChange={handleYearChange}
-                >
-                  {[2019, 2020, 2021].map((item, index) => (
-                    <MenuItem key={index} value={item}>
-                      {item}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              <PeriodFilter
+                month={month}
+                year={year}
+                handleMonthChange={handleMonthChange}
+                handleYearChange={handleYearChange}
+              />
             </Grid>
             <Grid item>
               <IconButton
@@ -421,7 +397,8 @@ export default function App() {
 
       <Dialog
         open={showForm}
-        maxWidth="xl"
+        maxWidth="sm"
+        fullWidth
         aria-describedby="alert-dialog-description"
         aria-labelledby="form-dialog-title"
       >
@@ -458,7 +435,7 @@ export default function App() {
                 <label htmlFor="form-despesa">Despesa</label>
               </div>
             </Grid>
-            <Grid item style={{ minWidth: 300 }}>
+            <Grid item>
               <TextField
                 label="Descrição"
                 fullWidth
@@ -495,13 +472,14 @@ export default function App() {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button
+          <IconButton
             disabled={!selected._id}
+            aria-label="delete"
             color="secondary"
             onClick={() => setOpenDeleteConfirmation(true)}
           >
-            Excluir
-          </Button>
+            <Delete />
+          </IconButton>
 
           <Button color="secondary" onClick={() => setShowForm(false)}>
             Cancelar
