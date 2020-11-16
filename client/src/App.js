@@ -162,7 +162,7 @@ export default function App() {
       dercription: '',
       category: '',
       type: '',
-      value: 0,
+      value: null,
       day: 1,
       month: month + 1,
       year: year,
@@ -458,7 +458,7 @@ export default function App() {
                 <label htmlFor="form-despesa">Despesa</label>
               </div>
             </Grid>
-            <Grid item style={{ minWidth: 400 }}>
+            <Grid item style={{ minWidth: 300 }}>
               <TextField
                 label="Descrição"
                 fullWidth
@@ -468,6 +468,7 @@ export default function App() {
             </Grid>
             <Grid item>
               <TextField
+                fullWidth
                 label="Categoria"
                 value={selected.category}
                 onChange={handleCategoryChange}
@@ -475,14 +476,16 @@ export default function App() {
             </Grid>
             <Grid item>
               <TextField
+                fullWidth
                 label="Valor"
                 type="number"
-                value={selected.value}
+                defaultValue={selected.value}
                 onChange={handleValueChange}
               />
             </Grid>
             <Grid item>
               <TextField
+                fullWidth
                 label="Data"
                 type="date"
                 defaultValue={dateStr(selected)}
